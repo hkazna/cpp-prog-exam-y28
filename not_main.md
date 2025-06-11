@@ -956,6 +956,207 @@ Person deleted
 Таким образом, мы видим, что теперь конструктор и деструктор класса Person вызываются только один раз.
 
 
+### Организации взаимодействия между классами
+
+1. Композиция (Composition)
+"Класс содержит другой класс"
+Один класс включает в себя объект другого класса как член данных.
+
+Пример:
+```cpp
+class Engine {
+public:
+    void start() { cout << "Engine started\n"; }
+};
+
+class Car {
+private:
+    Engine engine;  // Композиция
+public:
+    void startCar() {
+        engine.start();
+    }
+};
+```
+Особенности:
+- Жизненный цикл Engine зависит от Car (создается и уничтожается вместе с Car).
+- Жесткая связь (изменение Engine может потребовать изменения Car).
+
+2. Агрегация (Aggregation)
+"Класс использует другой класс, но не управляет его временем жизни"
+Объект передается извне (обычно через указатель или ссылку).
+
+Пример:
+```cpp
+class Wheel {
+public:
+    void rotate() { cout << "Wheel rotating\n"; }
+};
+
+class Car {
+private:
+    Wheel* wheels[4];  // Агрегация
+public:
+    Car(Wheel* w1, Wheel* w2, Wheel* w3, Wheel* w4) {
+        wheels[0] = w1; wheels[1] = w2; // ...
+    }
+    void drive() {
+        for (auto wheel : wheels) wheel->rotate();
+    }
+};
+```
+Особенности:
+- Wheel может существовать отдельно от Car.
+- Более гибкая связь по сравнению с композицией.
+
+3. Ассоциация (Association)
+"Класс знает о другом классе, но не управляет им"
+Объекты взаимодействуют временно (например, через методы).
+
+Пример:
+```cpp
+class Teacher;  // Forward declaration
+
+class Student {
+public:
+    void askQuestion(Teacher& teacher);  // Ассоциация
+};
+
+class Teacher {
+public:
+    void answerQuestion() { cout << "Answering...\n"; }
+};
+
+void Student::askQuestion(Teacher& teacher) {
+    teacher.answerQuestion();
+}
+```
+Особенности:
+- Взаимодействие происходит только во время вызова метода.
+- Нет жесткой зависимости.
+
+4. Наследование (Inheritance)
+"Класс является подтипом другого класса"
+Дочерний класс наследует поля и методы родительского.
+
+Пример:
+```cpp
+class Animal {
+public:
+    virtual void makeSound() { cout << "Some sound\n"; }
+};
+
+class Dog : public Animal {
+public:
+    void makeSound() override { cout << "Bark!\n"; }
+};
+```
+Особенности:
+- Позволяет использовать полиморфизм.
+- Сильная связь (изменение родительского класса может сломать дочерний).
+
+5. Зависимость (Dependency)
+"Класс временно использует другой класс"
+Объект передается в метод или возвращается из метода.
+
+Пример:
+```cpp
+class Logger {
+public:
+    static void log(const string& message) { cout << message << endl; }
+};
+
+class Calculator {
+public:
+    int add(int a, int b) {
+        Logger::log("Adding numbers");  // Зависимость
+        return a + b;
+    }
+};
+```
+Особенности:
+- Взаимодействие кратковременное.
+- Минимальная связность.
+
+6. Дружественные классы/функции (Friendship)
+"Класс разрешает другому классу/функции доступ к своим приватным членам"
+Нарушает инкапсуляцию, но иногда необходимо.
+
+Пример:
+```cpp
+class SecretData {
+private:
+    int secretCode;
+    friend class Spy;  // Дружественный класс
+};
+
+class Spy {
+public:
+    void stealSecret(const SecretData& data) {
+        cout << "Stolen code: " << data.secretCode << endl;
+    }
+};
+```
+
+Особенности:
+- Использовать осторожно (нарушает принцип инкапсуляции).
+- Полезно для операторов перегрузки или тестирования.
+
+7. Интерфейсы (Абстрактные классы)
+"Класс определяет контракт, который должны реализовать другие классы"
+Чисто абстрактные классы с виртуальными методами.
+
+Пример:
+```cpp
+class IPrintable {
+public:
+    virtual void print() const = 0;
+    virtual ~IPrintable() = default;
+};
+
+class Report : public IPrintable {
+public:
+    void print() const override { cout << "Printing report...\n"; }
+};
+```
+Особенности:
+- Позволяет реализовать полиморфизм без жесткой привязки.
+- Часто используется с виртуальным наследованием для избежания diamond problem.
+
+8. Шаблоны (Templates)
+"Класс/функция работает с разными типами данных"
+Позволяет создавать обобщенные классы/функции.
+
+Пример:
+```cpp
+template <typename T>
+class Box {
+private:
+    T content;
+public:
+    void setContent(const T& item) { content = item; }
+    T getContent() const { return content; }
+};
+
+Box<int> intBox;
+Box<string> stringBox;
+```
+
+Особенности:
+- Позволяет избежать дублирования кода.
+- Компилятор генерирует код для каждого используемого типа.
+
+#### Как выбрать способ взаимодействия? #
+- Композиция – если объект не существует без контейнера.
+- Агрегация – если объект может принадлежать разным контейнерам.
+- Наследование – если нужно выразить отношение "является" (is-a).
+- Ассоциация – для временных взаимодействий.
+- Интерфейсы – для слабой связанности и полиморфизма.
+- Шаблоны – для обобщенного программирования.
+
+
+
+
 
 
 

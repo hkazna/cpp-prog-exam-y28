@@ -226,6 +226,8 @@ public:
     Person(std::string name, int age) {
         this->_name = name;
         this->_age = age;
+
+        std::cout << "Person created" << std::endl;
     }
 
     ~Person() {
@@ -243,6 +245,8 @@ class Employee : public Person {
 public:
     Employee(std::string name, int age, std::string company_name) : Person(name, age) {
         this->_company_name = company_name;
+
+        std::cout << "Employee created" << std::endl;
     }
 
     ~Employee() {
@@ -252,14 +256,35 @@ public:
 };
 
 int main() {
-    Person Nikita("Nikita", 21);
-    Nikita.display(); // Name: Nikita      Age: 21
-
     Employee Emin("Emin", 21, "Ozon");
     Emin.display(); // Name: Emin       Age: 21
 }
 ```
 
 В обоих классах деструктор просто выводит некоторое сообщение. В функции main создается один объект Employee, однако при завершении программы будет вызываться деструктор как из производного, так и из базового класса
+
+Консольный вывод:
+![image](https://github.com/user-attachments/assets/88c1597a-0736-4132-80f5-51e924181389)
+
+
+Также стоит отметить, что иногда наследование от класса может быть нежелательно. И с помощью спецификатора final мы можем запретить наследование:
+```cpp
+class Person final {
+};
+```
+
+Тогда, если мы попробуем наследоваться от Person, то получим ошибку
+```cpp
+class Employee : public Person { // ошибка
+};
+```
+
+ТАКЖЕ ВАЖНО ТАБЛИЦА НАСЛЕДОВАНИЯ  В С++
+
+![image](https://github.com/user-attachments/assets/ee7001d9-d07a-4d39-a032-73632ef19a36)
+
+
+
+
 
 
